@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="file_sufix" default=""/>
+
+  <node pkg="motion_tracer" name="tracer_recording_node" type="tracer_recording_node" args="$(arg file_sufix)"/>
+  <node pkg="motion_tracer" name="joy_recording_node" type="joy_recording_node" args="$(arg file_sufix)"/>
+</launch>

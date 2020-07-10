@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="DUALSHOCK" default="false"/>
+  <arg name="file_sufix" default=""/>
+
+  <node pkg="motion_tracer" name="tracer_playback_node" type="tracer_playback_node" args="$(arg file_sufix)"/>
+  <node pkg="motion_tracer" name="joy_playback_node" type="joy_playback_node" args="$(arg file_sufix)">
+    <remap from="joy" to="tracer/joy" if="$(arg DUALSHOCK)"/>
+    <remap from="cmd_vel" to="tracer/cmd_vel" if="$(arg DUALSHOCK)"/>
+  </node> 
+</launch>

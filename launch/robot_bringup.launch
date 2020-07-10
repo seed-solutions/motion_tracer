@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <arg name="joy_pad" default="elecom"/>
+  <arg name="robot_model" default="typef"/>
+  <arg name="REAL" default="true" />
+  <arg name="DUALSHOCK" default="false"/>
+  <arg name="OBSTACLE_DETECTION" default="false"/>
+
+  <!-- ros_controller -->
+  <include file="$(find seed_r7_bringup)/launch/seed_r7_bringup.launch">
+    <arg name="robot_model" value="$(arg robot_model)"/>
+    <arg name="controller_rate"     default="50"/>
+  </include>
+
+  <!-- navigation -->
+  <include file="$(find motion_tracer)/launch/wheel_bringup.launch" >
+    <arg name="joy_pad" value="$(arg joy_pad)"/>
+    <arg name="REAL" value="$(arg REAL)"/>
+    <arg name="DUALSHOCK" value="$(arg DUALSHOCK)"/>
+  </include>
+
+  <!-- convert from tracer data to seed_r7 joint data -->
+  <include file="$(find motion_tracer)/launch/data_converter.launch" >
+    <arg name="DUALSHOCK" value="$(arg DUALSHOCK)"/>
+  </include>
+
+  <!-- other -->
+  <node name="scan_throttler" type="throttle" pkg="topic_tools" args="messages /scan 2 /scan_throttle" />
+  <node pkg="uvc_camera" name="uvc_camera_node" type="uvc_camera_node" />
+
+  <include file="$(find motion_tracer)/launch/obstacle_detector.launch"  if="$(arg OBSTACLE_DETECTION)"/>
+
+  <node pkg="diagnostic_aggregator" type="aggregator_node" name="diagnostic_aggregator" >
+    <rosparam command="load" file="$(find motion_tracer)/config/diagnostics.yaml" />
+  </node>
+
+</launch>

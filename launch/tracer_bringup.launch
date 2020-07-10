@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="DUALSHOCK" default="false"/>
+
+  <!-- arg dynamic reconfigure parameters -->
+  <arg name="joint_state_enable" default="true"/>
+  <arg name="joy_enable" default="true"/>
+  <arg name="initial_pose" default="none"/>
+
+  <arg name="neck_movement" default="increment"/>
+  <arg name="neck_offset" default="0"/>
+  <arg name="neck_auto" default="false"/>
+  <arg name="neck_reverse" default="false"/>
+
+  <node pkg="motion_tracer" name="tracer_teleop_node" type="tracer_teleop_node" output="screen">
+    <remap from="joy" to="tracer/joy" if="$(arg DUALSHOCK)"/>
+    <remap from="cmd_vel" to="tracer/cmd_vel" if="$(arg DUALSHOCK)"/>
+  </node>
+
+  <!-- set dynamic reconfigure parameters -->
+  <node pkg="dynamic_reconfigure" name="robot_set_param" type="dynparam" args="set_from_parameters upper_controller_node">
+    <param name="movement" type="str" value="$(arg neck_movement)" />
+    <param name="automatically" type="bool" value="$(arg neck_auto)" />
+    <param name="reverse" type="bool" value="$(arg neck_reverse)" />
+    <param name="offset" type="int" value="$(arg neck_offset)" />
+  </node>
+
+  <node pkg="dynamic_reconfigure" name="tracer_set_param"  type="dynparam" args="set_from_parameters tracer_teleop_node">
+    <param name="publish_joint_state_enable" type="bool" value="$(arg joint_state_enable)" />
+    <param name="publish_joy_enable" type="bool" value="$(arg joy_enable)" />
+    <param name="initial_pose" type="str" value="$(arg initial_pose)" />
+  </node>
+
+</launch>

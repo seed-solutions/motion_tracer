@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="DUALSHOCK" default="false"/>
+
+  <node pkg="motion_tracer" name="upper_controller_node" type="upper_controller_node" output="screen">
+    <remap from="joy" to="tracer/joy" if="$(arg DUALSHOCK)"/>
+  </node>
+  <node pkg="motion_tracer" name="lower_controller_node" type="lower_controller_node" output="screen"/>
+
+</launch>

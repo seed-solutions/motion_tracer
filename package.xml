@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>motion_tracer</name>
+  <version>0.0.1</version>
+  <description>The motion_tracer package</description>
+  <maintainer email="y.shiigi@thk.co.jp">Yasuto Shiigi</maintainer>
+  <license>BSD</license>
+
+  <author>Yasuto Shiigi</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>rospy</depend>
+  <depend>roslib</depend>
+  <depend>std_msgs</depend>
+  <depend>message_generation</depend>
+
+  <depend>seed_r7_ros_controller</depend>
+  <depend>seed_r7_bringup</depend>
+  <depend>seed_r7_navigation</depend>
+  <depend>seed_r7_robot_interface</depend>
+  <depend>seed_r7_moveit_config</depend>
+  <depend>seed_r7_typef_moveit_config</depend>
+  <depend>seed_r7_typeg_moveit_config</depend>
+
+  <depend>uvc_camera</depend>
+
+</package>

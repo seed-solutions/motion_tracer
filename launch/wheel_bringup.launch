@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="joy_pad" default="elecom"/>
+  <arg name="REAL" default="true" />
+  <arg name="DUALSHOCK" default="true"/>
+
+  <!--  URG Settings -->
+  <arg name="~ip_address" default="192.168.0.10" />
+  <arg name="~frame_id" default="wheels_base_laser_link" />
+
+  <group if="$(arg REAL)">
+    <node name="urg_node" pkg="urg_node" type="urg_node" if="$(arg REAL)" >
+      <param name="~ip_address" value="$(arg ~ip_address)" />
+      <param name="~frame_id" value="$(arg ~frame_id)" />
+
+      <!-- +-110[deg] -->
+      <param name="~angle_min" value="-1.92" />
+      <param name="~angle_max" value="1.92" />
+    </node>
+
+    <include file="$(find seed_r7_navigation)/launch/wheel_with_making_map.launch">
+      <arg name="RUN_BRINGUP" default="false" />
+    </include>
+  </group>
+
+  <include file="$(find seed_r7_navigation)/launch/wheel_with_dummy.launch" unless="$(arg REAL)">
+    <arg name="RUN_BRINGUP" default="false" />
+  </include>
+
+  <include file="$(find motion_tracer)/launch/joy.launch">
+    <arg name="joy_pad" value="$(arg joy_pad)" />
+    <arg name="DUALSHOCK" value="$(arg DUALSHOCK)"/>
+  </include>
+
+</launch>
