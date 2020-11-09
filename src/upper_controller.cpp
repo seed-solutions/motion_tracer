@@ -8,6 +8,8 @@ UpperController::UpperController(const ros::NodeHandle _nh) :
   move_time_ = controller_cycle_;
 
   tracer_state_sub_ = nh_.subscribe("/tracer_states",1, &UpperController::tracerStateCallback,this);
+  mechaless_master_state_sub_ = nh_.subscribe("/mechaless_master_states",1,
+    &UpperController::tracerStateCallback_mechaless,this);
   joy_sub_ = nh_.subscribe("/joy",1, &UpperController::getJoy,this);
   grasp_client_ =  nh_.serviceClient<seed_r7_ros_controller::HandControl>("seed_r7_ros_controller/hand_control");
 
@@ -209,6 +211,38 @@ void UpperController::sendJointAngles()
   }
 //------------------------------------------------------------
 
+}
+
+////////////mechaless master: ///////////////////////////////////////////////////////////
+void UpperController::tracerStateCallback_mechaless(const sensor_msgs::JointState& _tracer_data)
+{
+  joint_angles_["waist_y"] = _tracer_data.position[0] / 10.0  * deg2Rad; //waist_y
+
+  joint_angles_["r_shoulder_p"] = _tracer_data.position[1] / 10.0 * deg2Rad * -1.0; //r_shoulder_p
+  joint_angles_["r_shoulder_r"] = _tracer_data.position[2] / 10.0 * deg2Rad * -1.0; //r_shoulder_r
+  joint_angles_["r_shoulder_y"] = _tracer_data.position[3] / 10.0 * deg2Rad * -1.0; //r_shoulder_y
+  joint_angles_["r_elbow"] = (180 - _tracer_data.position[4] / 10.0) * deg2Rad * -1.0; //r_elbow_p
+  joint_angles_["r_wrist_y"] = _tracer_data.position[5] / 10.0 * deg2Rad * -1.0; //r_wrist_y
+  joint_angles_["r_wrist_p"] = _tracer_data.position[6] / 10.0 * deg2Rad * -1.0; //r_wrist_p
+  joint_angles_["r_wrist_r"] = _tracer_data.position[7] / 10.0 * deg2Rad * 1.0; //r_wrist_r
+  joint_angles_["r_hand"] = (_tracer_data.position[8] / 10.0 * deg2Rad  + 1.0)* 1.0; //r_hand
+
+  joint_angles_["l_shoulder_p"] = _tracer_data.position[9] / 10.0 * deg2Rad * -1.0; //l_shoulder_p
+  joint_angles_["l_shoulder_r"] = _tracer_data.position[10] / 10.0 * deg2Rad * 1.0; //l_shoulder_r
+  joint_angles_["l_shoulder_y"] = _tracer_data.position[11] / 10.0 * deg2Rad * 1.0; //l_shoulder_y
+  joint_angles_["l_elbow"] = (180- _tracer_data.position[12] / 10.0) * deg2Rad * -1.0; //l_elbow_p
+  joint_angles_["l_wrist_y"] = _tracer_data.position[13] / 10.0 * deg2Rad * 1.0; //l_wrist_y
+  joint_angles_["l_wrist_p"] = _tracer_data.position[14] / 10.0 * deg2Rad * -1.0; //l_wrist_p
+  joint_angles_["l_wrist_r"] = _tracer_data.position[15] / 10.0 * deg2Rad * -1.0; //l_wrist_r
+  joint_angles_["l_hand"] = (_tracer_data.position[16] / 10.0 * deg2Rad + 0.8) * -1.0; //l_hand
+
+  joint_angles_["waist_p"] = _tracer_data.position[19] / 10.0 * deg2Rad * 1.0; //waist_p
+  joint_angles_["waist_r"] = _tracer_data.position[21] / 10.0 * deg2Rad * 1.0; //waist_r
+  joint_angles_["neck_y"] = _tracer_data.position[17] / 10.0 * deg2Rad * -1.0; //neck_y
+  joint_angles_["neck_r"] = _tracer_data.position[20] / 10.0 * deg2Rad * 1.0; //neck_r
+  joint_angles_["neck_p"] = 0.0 - _tracer_data.position[18] / 10.0 * deg2Rad * 1.0; //neck_p
+
+  sendJointAngles();
 }
 
 void UpperController::getJoy(const sensor_msgs::JoyPtr& _ps3){

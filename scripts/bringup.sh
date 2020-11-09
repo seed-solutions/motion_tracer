@@ -29,7 +29,12 @@ elif [ ${command} = "tracer" ]; then
 
   export ROS_MASTER_URI=http://${robot_ip}:11311;export ROS_IP=${local_ip};
   if [ ${device} = "mechaless" ]; then
-    :
+    gnome-terminal --tab -e 'bash -c "sleep 3; export LD_LIBRARY_PATH=/usr/local/lib/nuitrack:$LD_LIBRARY_PATH; source '${ros_ws}'/devel/setup.bash; roslaunch nuitrack_body_tracker nuitrack_body_tracker.launch"' \
+     --tab -e 'bash -c "sleep 5; source '${ros_ws}'/devel/setup.bash; roslaunch skeleton_processor skeleton_sending_angle.launch"' \
+     --tab -e 'bash -c "sleep 10; source /opt/intel/openvino/bin/setupvars.sh; source '${ros_ws}'/devel/setup.bash; roslaunch skeleton_processor skeleton_drawing.launch"' \
+     --tab -e 'bash -c "sleep 12; echo $LD_LIBRARY_PATH; source '${ros_ws}'/devel/setup.bash; source /opt/intel/openvino/bin/setupvars.sh; sleep 5; roslaunch skeleton_processor face_detection.launch"' \
+     --tab -e 'bash -c "sleep 14; source '${ros_ws}'/devel/setup.bash; rosrun skeleton_processor skeleton_processor_pygame.py"';
+
   elif [ ${device} = "mechanical" ]; then
     gnome-terminal --zoom=0.5 --tab -e 'bash -c "roslaunch --wait motion_tracer tracer_bringup.launch \\
       DUALSHOCK:='${dual_shock}' initial_pose:='${initial_pose}' neck_movement:='${neck_movement}' neck_offset:='${neck_offset}' neck_auto:='${neck_auto}' neck_reverse:='${neck_reverse}' "';

@@ -39,12 +39,14 @@ public:
   void init_follow_joint_trajectory();
   void graspControl(std::string _position, std::string _pose);
   void tracerStateCallback(const sensor_msgs::JointState& _tracer_data);
+  void tracerStateCallback_mechaless(const sensor_msgs::JointState& _tracer_data);
   void sendJointAngles();
   void getJoy(const sensor_msgs::JoyPtr& _ps3);
 
 private:
   ros::NodeHandle nh_;
   ros::Subscriber tracer_state_sub_;
+  ros::Subscriber mechaless_master_state_sub_;
   ros::Subscriber joy_sub_;
 
   TrajectoryClient* rarm_client_;
