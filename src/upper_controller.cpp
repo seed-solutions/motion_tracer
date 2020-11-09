@@ -246,11 +246,11 @@ void UpperController::getJoy(const sensor_msgs::JoyPtr& _ps3){
   //for neck pitch & roll
   if(_ps3->buttons[7] == 0 &&_ps3->buttons[13] == 1 &&  (std::abs(_ps3->axes[2]) > 0.05 || std::abs(_ps3->axes[3]) > 0.05)) {
     if(neck_movement_ == "absolute"){
-      joint_angles_["neck_r"] = (_ps3->axes[2] * 2);
+      joint_angles_["neck_y"] = (_ps3->axes[2] * 2);
       joint_angles_["neck_p"] = neck_offset_*(M_PI/180) + sign * (_ps3->axes[3] * -2);
     }
     else if(neck_movement_ == "increment"){
-      joint_angles_["neck_r"] += (_ps3->axes[2] * 0.05);
+      joint_angles_["neck_y"] += (_ps3->axes[2] * 0.05);
       joint_angles_["neck_p"] -= sign * (_ps3->axes[3] * 0.05);
     }
   }

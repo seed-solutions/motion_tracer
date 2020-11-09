@@ -7,7 +7,7 @@ local_ip=$5
 command=$6
 
 #ros_ws=/home/seed/ros/kinetic
-#ros_ws=/home/seed/ros/melodic
+ros_ws=/home/seed/ros/melodic
 source ${ros_ws}/devel/setup.bash
 roscd motion_tracer/scripts
 
@@ -70,9 +70,10 @@ elif [ ${command} = "initial_pose" ]; then
 
 elif [ ${command} = "neck_pose" ]; then
   neck_movement=$7
-  neck_auto=$8
-  neck_reverse=$9
-  neck_offset=${10}
+  neck_offset=$8
+  neck_auto=$9
+  neck_reverse=${10}
+
 
   export ROS_MASTER_URI=http://${robot_ip}:11311;export ROS_IP=${local_ip};
   rosrun dynamic_reconfigure dynparam set upper_controller_node \
