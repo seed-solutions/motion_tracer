@@ -27,6 +27,7 @@
 
   <!-- other -->
 <!--
+  <include file="$(find motion_tracer)/launch/rs_camera.launch" />
   <node name="scan_throttler" type="throttle" pkg="topic_tools" args="messages /scan 2 /scan_throttle" />
   <node pkg="uvc_camera" name="uvc_camera_node" type="uvc_camera_node" />
 -->
