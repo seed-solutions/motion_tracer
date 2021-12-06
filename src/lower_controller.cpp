@@ -1,7 +1,7 @@
 #include "motion_tracer/lower_controller.h"
 
 LowerController::LowerController(const ros::NodeHandle _nh) :
-  nh_(_nh),lifter_ratio_(0.01),init(true)
+  nh_(_nh),lifter_ratio_(0.01),init(true),on_protective_stop(false)
 {
 
   controller_rate_ = 50;
@@ -10,6 +10,7 @@ LowerController::LowerController(const ros::NodeHandle _nh) :
 
   joint_state_sub_ = nh_.subscribe("/joint_states",2, &LowerController::jointStateCallback,this);
   joy_sub_ = nh_.subscribe("/joy",2, &LowerController::getJoy,this);
+  diag_sub_ = nh_.subscribe("/diagnostics",1, &LowerController::diagnosticsCallback,this);
 
   init_follow_joint_trajectory();
 
@@ -65,6 +66,32 @@ void LowerController::getJoy(const sensor_msgs::JoyPtr& _ps3)
 
     sendJointAngles();
   }
+}
+
+void LowerController::diagnosticsCallback(const diagnostic_msgs::DiagnosticArrayPtr& _msg)
+{
+  std::string hardware_id = _msg->status[0].hardware_id;
+  std::map<std::string,std::string> status;
+
+  if(hardware_id.find("SEED-Noid-Mover") != std::string::npos){
+    for (int i=0; i < _msg->status[0].values.size(); ++i){
+      status[_msg->status[0].values[i].key] = _msg->status[0].values[i].value;
+    }
+  }
+
+  // send goal 0 when E-STOP pressed
+  if(status["Emergency Stopped"] == "True"){
+    joint_angles_["ankle"] = 0;
+    joint_angles_["knee"] = 0;
+    sendJointAngles();
+  }
+  else if(status["Protective Stopped"] == "True"){
+    on_protective_stop = true;
+  }
+  else if(status["Protective Stopped"] == "False"){
+    on_protective_stop = false;
+  }
+
 }
 
 int main(int argc, char **argv)
