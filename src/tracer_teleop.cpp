@@ -54,6 +54,8 @@ TracerTeleop::TracerTeleop(const ros::NodeHandle _nh) :
   pub_joy_enable_ = true;
   initial_pose_ = "none";
 
+  enable_joy_ = true;
+
 }
 
 void TracerTeleop::get_tracer_data()
@@ -187,7 +189,16 @@ void TracerTeleop::get_tracer_data()
       init_counter_ -=1;
     }
     //ros::param::get("/tracer/pub_joy_enable",pub_joy_enable_);
-    if(pub_joy_enable_) joy_pub_.publish(joy_);
+    if(pub_joy_enable_){
+      if(enable_joy_){
+        joy_pub_.publish(joy_);
+        enable_joy_ = false;
+      }
+      else{
+        enable_joy_ = true;
+      }
+    }
+
     //joy_pub_.publish(joy_);
 
     //dummy cmd_vel publish
