@@ -48,5 +48,7 @@ private:
 
   int16_t pre_r_wrist_y_,pre_l_wrist_y_;
 
+  bool enable_joy_;  // to change 50hz joy pub
+
 };
 #endif
