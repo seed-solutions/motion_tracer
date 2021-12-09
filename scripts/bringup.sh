@@ -14,7 +14,7 @@ roscd motion_tracer/scripts
 if [ ${command} = "controller" ]; then
   dual_shock=$7
 
-  expect ssh.exp ${robot_ip} ${password} "killall gnome-terminal-server;exit";
+  expect ssh.exp ${robot_ip} ${password} "rosnode kill --all & killall -9 roscore & killall -9 rosmaster;killall gnome-terminal-server;exit";
   gnome-terminal --zoom=0.5 \
     --tab -e 'bash -c "expect ssh.exp '${robot_ip}' '${password}' \"export ROS_IP='${robot_ip}'\" \"roslaunch motion_tracer robot_bringup.launch DUALSHOCK:='${dual_shock}' \" "';
 
