@@ -32,7 +32,7 @@ public:
   void init_follow_joint_trajectory();
   void jointStateCallback(const sensor_msgs::JointState& _joint_data);
   void sendJointAngles();
-  void getJoy(const sensor_msgs::JoyPtr& _ps3);
+  void getJoy(const sensor_msgs::JoyPtr& _data);
   void diagnosticsCallback(const diagnostic_msgs::DiagnosticArrayPtr& _msg);
 
 private:
@@ -61,7 +61,7 @@ private:
   const float knee_lower_limt = -1.57;
 
   float lifter_ratio_;
-  bool init,on_protective_stop;
+  bool update_joints,on_protective_stop;
 
   //led control
   ros::ServiceClient led_client_;

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(motion_tracer)
 
 ## Find catkin macros and libraries
@@ -35,7 +35,7 @@ else()
 endif()
 
 # add boost dependencies :
-find_package(Boost REQUIRED COMPONENTS filesystem system signals thread)
+find_package(Boost REQUIRED COMPONENTS filesystem system thread)
 if(NOT Boost_INCLUDE_DIRS)
   message(FATAL "boost required but not supported")
 else()
@@ -69,32 +69,42 @@ add_executable(tracer_teleop_node
   src/tracer_teleop.cpp
   src/tracer_command.cpp
 )
-target_link_libraries(tracer_teleop_node ${catkin_LIBRARIES} ${Boost_INCLUDE_DIRS})
+target_link_libraries(tracer_teleop_node ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(tracer_teleop_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 #controller
 add_executable(upper_controller_node src/upper_controller.cpp)
-target_link_libraries(upper_controller_node ${catkin_LIBRARIES} ${Boost_INCLUDE_DIRS})
+target_link_libraries(upper_controller_node ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(upper_controller_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(lower_controller_node src/lower_controller.cpp)
-target_link_libraries(lower_controller_node ${catkin_LIBRARIES} ${Boost_INCLUDE_DIRS})
+target_link_libraries(lower_controller_node ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(lower_controller_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 #recording
 add_executable(tracer_recording_node src/tracer_recording.cpp)
-target_link_libraries(tracer_recording_node ${catkin_LIBRARIES} ${Boost_INCLUDE_DIRS})
+target_link_libraries(tracer_recording_node ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(tracer_recording_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(joy_recording_node src/joy_recording.cpp)
-target_link_libraries(joy_recording_node ${catkin_LIBRARIES} ${Boost_INCLUDE_DIRS})
+target_link_libraries(joy_recording_node ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(joy_recording_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 #playback
 add_executable(tracer_playback_node src/tracer_playback.cpp)
-target_link_libraries(tracer_playback_node ${catkin_LIBRARIES} ${Boost_INCLUDE_DIRS})
+target_link_libraries(tracer_playback_node ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(tracer_playback_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(joy_playback_node src/joy_playback.cpp)
-target_link_libraries(joy_playback_node ${catkin_LIBRARIES} ${Boost_INCLUDE_DIRS})
+target_link_libraries(joy_playback_node ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(joy_playback_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+file(GLOB python_scripts_DIR
+    "scripts/*.py"
+)
+
+catkin_install_python(PROGRAMS ${python_scripts_DIR}
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(DIRECTORY config launch scripts
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})

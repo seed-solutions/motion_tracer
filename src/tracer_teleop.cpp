@@ -38,10 +38,10 @@ TracerTeleop::TracerTeleop(const ros::NodeHandle _nh) :
   tracer_state_.name[15] = "l_wrist_r";
   tracer_state_.name[16] = "l_hand";
 
-  //same as ps3joy http://wiki.ros.org/ps3joy
-  joy_.axes.resize(20);
+  //same as elecom gamepad
+  joy_.axes.resize(6);
   fill(joy_.axes.begin(),joy_.axes.end(),0);
-  joy_.buttons.resize(17);
+  joy_.buttons.resize(13);
   fill(joy_.buttons.begin(),joy_.buttons.end(),0);
 
   tracer_data_.resize(68);
@@ -120,72 +120,97 @@ void TracerTeleop::get_tracer_data()
     joy_.axes[0] = static_cast<float>(127 - tracer_data_[2]) / 127;
     joy_.axes[1] = static_cast<float>(127 - tracer_data_[3]) / 127;
     //right joy_stick
-    joy_.axes[2] = static_cast<float>(127 - tracer_data_[4]) / 127;
-    joy_.axes[3] = static_cast<float>(127 - tracer_data_[5]) / 127;
+    joy_.axes[3] = static_cast<float>(127 - tracer_data_[4]) / 127;
+    joy_.axes[2] = static_cast<float>(127 - tracer_data_[5]) / 127;
 
     //Left Hand
     switch(tracer_data_[0]){
       case 32:
-        joy_.buttons[4] = 0;
-        joy_.buttons[5] = 1;
-        joy_.buttons[6] = 0;
-        joy_.buttons[7] = 0;
+        joy_.axes[4] = -1;
+        joy_.axes[5] = 0;
+        // joy_.buttons[4] = 0;
+        // joy_.buttons[5] = 1;
+        // joy_.buttons[6] = 0;
+        // joy_.buttons[7] = 0;
         break;
       case 128:
-        joy_.buttons[4] = 0;
-        joy_.buttons[5] = 0;
-        joy_.buttons[6] = 0;
-        joy_.buttons[7] = 1;
+        joy_.axes[4] = 1;
+        joy_.axes[5] = 0;
+        // joy_.buttons[4] = 0;
+        // joy_.buttons[5] = 0;
+        // joy_.buttons[6] = 0;
+        // joy_.buttons[7] = 1;
         break;
       case 160:
-        joy_.buttons[4] = 0;
-        joy_.buttons[5] = 1;
-        joy_.buttons[6] = 0;
-        joy_.buttons[7] = 1;
+        joy_.axes[4] = 2; //左右同時押し。elecomパッドだと存在しない
+        joy_.axes[5] = 0;
+
+        // joy_.buttons[4] = 0;
+        // joy_.buttons[5] = 1;
+        // joy_.buttons[6] = 0;
+        // joy_.buttons[7] = 1;
         break;
       default:
-        joy_.buttons[4] = 0;
-        joy_.buttons[5] = 0;
-        joy_.buttons[6] = 0;
-        joy_.buttons[7] = 0;
+        joy_.axes[4] = 0;
+        joy_.axes[5] = 0;
+        // joy_.buttons[4] = 0;
+        // joy_.buttons[5] = 0;
+        // joy_.buttons[6] = 0;
+        // joy_.buttons[7] = 0;
     }
     //Right Hand
     switch(tracer_data_[1]){
       case 32:
-        joy_.buttons[12] = 0;
-        joy_.buttons[13] = 1;
-        joy_.buttons[14] = 0;
-        joy_.buttons[15] = 0;
+        joy_.buttons[0] = 0;
+        joy_.buttons[1] = 0;
+        joy_.buttons[2] = 0;
+        joy_.buttons[3] = 1;
+        // joy_.buttons[12] = 0;
+        // joy_.buttons[13] = 1;
+        // joy_.buttons[14] = 0;
+        // joy_.buttons[15] = 0;
         break;
       case 128:
-        joy_.buttons[12] = 0;
-        joy_.buttons[13] = 0;
-        joy_.buttons[14] = 0;
-        joy_.buttons[15] = 1;
+        joy_.buttons[0] = 1;
+        joy_.buttons[1] = 0;
+        joy_.buttons[2] = 0;
+        joy_.buttons[3] = 0;
+        // joy_.buttons[12] = 0;
+        // joy_.buttons[13] = 0;
+        // joy_.buttons[14] = 0;
+        // joy_.buttons[15] = 1;
         break;
       case 160:
-        joy_.buttons[12] = 0;
-        joy_.buttons[13] = 1;
-        joy_.buttons[14] = 0;
-        joy_.buttons[15] = 1;
+        joy_.buttons[0] = 1;
+        joy_.buttons[1] = 0;
+        joy_.buttons[2] = 0;
+        joy_.buttons[3] = 1;
+        // joy_.buttons[12] = 0;
+        // joy_.buttons[13] = 1;
+        // joy_.buttons[14] = 0;
+        // joy_.buttons[15] = 1;
         break;
       default:
-        joy_.buttons[12] = 0;
-        joy_.buttons[13] = 0;
-        joy_.buttons[14] = 0;
-        joy_.buttons[15] = 0;
+        joy_.buttons[0] = 0;
+        joy_.buttons[1] = 0;
+        joy_.buttons[2] = 0;
+        joy_.buttons[3] = 0;
+        // joy_.buttons[12] = 0;
+        // joy_.buttons[13] = 0;
+        // joy_.buttons[14] = 0;
+        // joy_.buttons[15] = 0;
     }
 
-    if((std::abs(joy_.axes[0]) > 0.05 || std::abs(joy_.axes[1]) > 0.05 || std::abs(joy_.axes[2]) > 0.05 || std::abs(joy_.axes[3]) > 0.05) && joy_.buttons[7] == 1) {
-      joy_.buttons[8] = 1;
+    if((std::abs(joy_.axes[0]) > 0.05 || std::abs(joy_.axes[1]) > 0.05 || std::abs(joy_.axes[3]) > 0.05 || std::abs(joy_.axes[2]) > 0.05) && joy_.axes[4] == 1) {
+      joy_.buttons[6] = 1;
       wheel_stop_flag_ = false;
     }
     else {
-      joy_.buttons[8] = 0;
+      joy_.buttons[6] = 0;
     }
     if(init_counter_ > 0){  //for initial pose
-      joy_.buttons[5] = 1;
-      joy_.buttons[15] = 1;
+      joy_.axes[4] = -1;
+      joy_.buttons[0] = 1;
       init_counter_ -=1;
     }
     //ros::param::get("/tracer/pub_joy_enable",pub_joy_enable_);
@@ -202,7 +227,7 @@ void TracerTeleop::get_tracer_data()
     //joy_pub_.publish(joy_);
 
     //dummy cmd_vel publish
-    if(joy_.buttons[8] == 0 && wheel_stop_flag_ == false && pub_joy_enable_==true){
+    if(joy_.buttons[6] == 0 && wheel_stop_flag_ == false && pub_joy_enable_==true){
       cmd_vel_.linear.x = 0;
       cmd_vel_.linear.y = 0;
       cmd_vel_.linear.z = 0;
@@ -213,7 +238,7 @@ void TracerTeleop::get_tracer_data()
       wheel_stop_flag_ = true;
     }
 
-    if(tracer_mode_ == 1 && joy_.buttons[13] == 0 ){
+    if(tracer_mode_ == 1 && joy_.buttons[3] == 0 ){
       if(initial_pose_ == "MC"){
         init_counter_ = 50;
         tracer_state_.position[0] = 0;
@@ -267,7 +292,7 @@ void TracerTeleop::get_tracer_data()
         std::cout << "go to initial pose" << std::endl;
       }
     }
-    tracer_mode_ = joy_.buttons[13];
+    tracer_mode_ = joy_.buttons[3];
   }
 }
 

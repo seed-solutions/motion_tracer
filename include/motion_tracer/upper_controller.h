@@ -41,7 +41,7 @@ public:
   void tracerStateCallback(const sensor_msgs::JointState& _tracer_data);
   void tracerStateCallback_mechaless(const sensor_msgs::JointState& _tracer_data);
   void sendJointAngles();
-  void getJoy(const sensor_msgs::JoyPtr& _ps3);
+  void getJoy(const sensor_msgs::JoyPtr& _data);
 
 private:
   ros::NodeHandle nh_;

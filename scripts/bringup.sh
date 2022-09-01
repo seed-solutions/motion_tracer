@@ -6,8 +6,16 @@ password=$4
 local_ip=$5
 command=$6
 
-#ros_ws=/home/seed/ros/kinetic
-ros_ws=/home/seed/ros/melodic
+##----- version check ----------
+#version=`cat /etc/lsb-release | grep DISTRIB_RELEASE`
+#if [[ ${version} =~ "16" ]]; then
+#  ros_ws=/home/seed/ros/kinetic
+#elif [[ ${version} =~ "18" ]]; then
+#  ros_ws=/home/seed/ros/melodic
+#elif [[ ${version} =~ "20" ]]; then
+#  ros_ws=/home/seed/ros/noetic
+#fi
+##-------------------------------
 source ${ros_ws}/devel/setup.bash
 roscd motion_tracer/scripts
 
@@ -85,6 +93,8 @@ elif [ ${command} = "neck_pose" ]; then
     "{'movement':'${neck_movement}', 'automatically':${neck_auto}, 'reverse':${neck_reverse}, 'offset':${neck_offset}}" 
 
 elif [ ${command} = "kill" ]; then
-  killall gnome-terminal-server&
-  expect ssh.exp ${user_name}@${robot_ip} ${password} "export DISPLAY=:0.0;killall gnome-terminal-server; bash '${ros_ws}'/src/motion_tracer/scripts/teleop_mover.sh"
+  remote_ros_ws=$7
+  rosnode kill --all & killall -9 roscore & killall -9 rosmaster;
+  killall gnome-terminal-server;
+  expect ssh.exp ${user_name}@${robot_ip} ${password} "export DISPLAY=:0.0;killall gnome-terminal-server; bash '${remote_ros_ws}'/src/motion_tracer/scripts/teleop_mover.sh"
 fi

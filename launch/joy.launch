@@ -4,7 +4,7 @@
   <arg name="joy_pad" default="elecom"/>
   <arg name="DUALSHOCK" default="true"/>
   
-  <arg name="joy_config" default="ps3-holonomic" />
+  <arg name="joy_config" default="elecom-holonomic" />
   <arg name="joy_dev" default="/dev/input/js0" />
   <arg name="config_filepath" default="$(find motion_tracer)/config/$(arg joy_config).config.yaml" />
 
@@ -13,14 +13,6 @@
     <param name="dev" value="$(arg joy_dev)" />
     <param name="deadzone" value="0.3" />
     <param name="autorepeat_rate" value="20" />
-    <remap from="joy" to="$(arg joy_pad)/joy" unless="$(eval joy_pad == 'ps3')"/>
-  </node>
-
-  <!-- remap -->
-  <node pkg="joy" type="joy_remap.py" name="$(arg joy_pad)_to_ps3" unless="$(eval joy_pad == 'ps3')">
-    <remap from="joy_in" to="$(arg joy_pad)/joy" />
-    <remap from="joy_out" to="joy" />
-    <rosparam command="load" file="$(find motion_tracer)/config/$(arg joy_pad)_to_ps3.yaml"/>
   </node>
 
   <node pkg="teleop_twist_joy" name="teleop_twist_joy" type="teleop_node">

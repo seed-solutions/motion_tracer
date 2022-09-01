@@ -1,7 +1,7 @@
 #include "motion_tracer/lower_controller.h"
 
 LowerController::LowerController(const ros::NodeHandle _nh) :
-  nh_(_nh),lifter_ratio_(0.01),init(true),on_protective_stop(false)
+  nh_(_nh),lifter_ratio_(0.01),update_joints(true),on_protective_stop(false)
 {
 
   controller_rate_ = 50;
@@ -34,12 +34,11 @@ void LowerController::init_follow_joint_trajectory()
 
 void LowerController::jointStateCallback(const sensor_msgs::JointState& _joint_data)
 {
-  if(init)
+  if(update_joints)
   {
     joint_angles_["ankle"] = _joint_data.position[0];
     joint_angles_["knee"] = _joint_data.position[1];
   }
-  init = false;
 
 }
 void LowerController::sendJointAngles()
@@ -54,17 +53,22 @@ void LowerController::sendJointAngles()
 
 }
 
-void LowerController::getJoy(const sensor_msgs::JoyPtr& _ps3)
+void LowerController::getJoy(const sensor_msgs::JoyPtr& _data)
 {
-    if((_ps3->buttons[8] == 1 || _ps3->buttons[10] == 1) && _ps3->axes[3] != 0){
-    joint_angles_["ankle"] -= (_ps3->axes[3] * lifter_ratio_);
-    joint_angles_["knee"] += (_ps3->axes[3] * lifter_ratio_);
+    if((_data->buttons[4] == 1 || _data->buttons[6] == 1) && _data->axes[2] != 0){
+    update_joints = false;
+    joint_angles_["ankle"] -= (_data->axes[2] * lifter_ratio_);
+    joint_angles_["knee"] += (_data->axes[2] * lifter_ratio_);
     if(joint_angles_["ankle"] > ankle_upper_limt) joint_angles_["ankle"] = ankle_upper_limt;
     else if(joint_angles_["ankle"] < ankle_lower_limt) joint_angles_["ankle"] = ankle_lower_limt;
     if(joint_angles_["knee"] > knee_upper_limt) joint_angles_["knee"] = knee_upper_limt;
     else if(joint_angles_["knee"] < knee_lower_limt) joint_angles_["knee"] = knee_lower_limt;
 
     sendJointAngles();
+  }
+  else
+  {
+    update_joints = true;
   }
 }
 

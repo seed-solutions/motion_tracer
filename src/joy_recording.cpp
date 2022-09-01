@@ -17,6 +17,9 @@ private:
   ros::Time start_time_;
   std::string file_;
   int sec;
+
+  int axex_size_ = 6;
+  int buttons_size_ = 13;
 };
 
 JoyRecording::JoyRecording(const ros::NodeHandle _nh,std::string _file) :
@@ -28,15 +31,15 @@ JoyRecording::JoyRecording(const ros::NodeHandle _nh,std::string _file) :
   start_time_ = ros::Time::now();
 
   ofs.app; //create data
-  //headder same as ps3joy http://wiki.ros.org/ps3joy
+  //same as elecom gamepad
   ofs << "time,";
-  for(int i=0; i < 20;++i){
+  for(int i=0; i < axex_size_;++i){
     ofs << "axes[" << i << "],";
   }
-  for(int i=0; i < 16;++i){
+  for(int i=0; i < buttons_size_-1;++i){
     ofs << "buttons[" << i << "],";
   }
-  ofs << "buttons[16]" << std::endl;
+  ofs << "buttons[" << buttons_size_-1 << "]" << std::endl;
 }
 
 void JoyRecording::GetJoy(const sensor_msgs::JoyPtr& _data){
