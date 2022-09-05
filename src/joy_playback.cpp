@@ -16,6 +16,9 @@ private:
   std::string pkg_path_;
   ros::Time start_time_;
   std::string file_;
+
+  int axex_size_ = 6;
+  int buttons_size_ = 13;
 };
 
 JoyPlayback::JoyPlayback(const ros::NodeHandle _nh,std::string _file) :
@@ -26,9 +29,9 @@ JoyPlayback::JoyPlayback(const ros::NodeHandle _nh,std::string _file) :
   pkg_path_ = ros::package::getPath("motion_tracer");
   joy_pub_ = nh_.advertise<sensor_msgs::Joy>("/joy",1);
 
-  //same as ps3joy http://wiki.ros.org/ps3joy
-  joy_.axes.resize(20);
-  joy_.buttons.resize(17);
+  //same as elecom gamepad
+  joy_.axes.resize(axex_size_);
+  joy_.buttons.resize(buttons_size_);
   start_time_ = ros::Time::now();
 }
 

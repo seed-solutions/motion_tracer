@@ -245,7 +245,7 @@ void UpperController::tracerStateCallback_mechaless(const sensor_msgs::JointStat
   sendJointAngles();
 }
 
-void UpperController::getJoy(const sensor_msgs::JoyPtr& _ps3){
+void UpperController::getJoy(const sensor_msgs::JoyPtr& _data){
   double look_right = 0;
   double look_left = 0;
 
@@ -260,14 +260,14 @@ void UpperController::getJoy(const sensor_msgs::JoyPtr& _ps3){
   else sign = 1;
 
   // for waist pitch & roll
-  if(_ps3->buttons[7] == 0 && _ps3->buttons[13] == 1 && (std::abs(_ps3->axes[0]) > 0.05 || std::abs(_ps3->axes[1]) > 0.05)) {
+  if(_data->axes[4] == 0 && _data->buttons[3] == 1 && (std::abs(_data->axes[0]) > 0.05 || std::abs(_data->axes[1]) > 0.05)) {
     if(neck_movement_ == "absolute"){
-      joint_angles_["waist_r"] = (_ps3->axes[0] * 1) ;
-      joint_angles_["waist_p"] = sign * (_ps3->axes[1] * -1) ;
+      joint_angles_["waist_r"] = (_data->axes[0] * 1) ;
+      joint_angles_["waist_p"] = sign * (_data->axes[1] * -1) ;
     }
     else if(neck_movement_ == "increment"){
-      joint_angles_["waist_r"] -= sign * (_ps3->axes[0] * 0.005);
-      joint_angles_["waist_p"] -= sign * (_ps3->axes[1] * 0.01);
+      joint_angles_["waist_r"] -= sign * (_data->axes[0] * 0.005);
+      joint_angles_["waist_p"] -= sign * (_data->axes[1] * 0.01);
     }
   }
   else{
@@ -278,14 +278,14 @@ void UpperController::getJoy(const sensor_msgs::JoyPtr& _ps3){
   }
 
   //for neck pitch & roll
-  if(_ps3->buttons[7] == 0 &&_ps3->buttons[13] == 1 &&  (std::abs(_ps3->axes[2]) > 0.05 || std::abs(_ps3->axes[3]) > 0.05)) {
+  if(_data->axes[4] == 0 &&_data->buttons[3] == 1 &&  (std::abs(_data->axes[3]) > 0.05 || std::abs(_data->axes[2]) > 0.05)) {
     if(neck_movement_ == "absolute"){
-      joint_angles_["neck_y"] = (_ps3->axes[2] * 2);
-      joint_angles_["neck_p"] = neck_offset_*(M_PI/180) + sign * (_ps3->axes[3] * -2);
+      joint_angles_["neck_y"] = (_data->axes[3] * 2);
+      joint_angles_["neck_p"] = neck_offset_*(M_PI/180) + sign * (_data->axes[2] * -2);
     }
     else if(neck_movement_ == "increment"){
-      joint_angles_["neck_y"] += (_ps3->axes[2] * 0.05);
-      joint_angles_["neck_p"] -= sign * (_ps3->axes[3] * 0.05);
+      joint_angles_["neck_y"] += (_data->axes[3] * 0.05);
+      joint_angles_["neck_p"] -= sign * (_data->axes[2] * 0.05);
     }
   }
   else{ //in case of automatically moving neck  or not
@@ -322,23 +322,14 @@ void UpperController::getJoy(const sensor_msgs::JoyPtr& _ps3){
   else if(joint_angles_["neck_p"] < neck_p_lower_limt)  joint_angles_["neck_p"] = neck_p_lower_limt;
 
   // set initial pose origin or MC
-  if(_ps3->buttons[5] == 1 || _ps3->buttons[15] == 1){
-    if(_ps3->buttons[5] != _ps3->buttons[15]){
-      joint_angles_["waist_r"] = 0;
-      joint_angles_["waist_p"] = 0;
-      joint_angles_["neck_y"] = 0;
-      joint_angles_["neck_r"] = 0;
-      joint_angles_["neck_p"] = neck_offset_*(M_PI/180);
-    }
-    else if(_ps3->buttons[5] == _ps3->buttons[15]){
-       joint_angles_["waist_r"] = 0;
-      joint_angles_["waist_p"] = -0.09;
-      joint_angles_["neck_y"] = 0;
-      joint_angles_["neck_r"] = 0;
-      joint_angles_["neck_p"] = 0.17;
-    }
+  if(_data->axes[4] == -1 || _data->axes[4] == 2 || _data->buttons[0] == 1){
+    joint_angles_["waist_r"] = 0;
+    joint_angles_["waist_p"] = 0;
+    joint_angles_["neck_y"] = 0;
+    joint_angles_["neck_r"] = 0;
+    joint_angles_["neck_p"] = neck_offset_*(M_PI/180);
 
-  if(_ps3->buttons[13] == 0) sendJointAngles();
+  if(_data->buttons[3] == 0) sendJointAngles();
   }
 }
 
