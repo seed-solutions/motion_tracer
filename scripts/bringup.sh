@@ -24,7 +24,7 @@ if [ ${command} = "controller" ]; then
 
   expect ssh.exp ${robot_ip} ${password} "rosnode kill --all & killall -9 roscore & killall -9 rosmaster;killall gnome-terminal-server;exit";
   gnome-terminal --zoom=0.5 \
-    --tab -e 'bash -c "expect ssh.exp '${robot_ip}' '${password}' \"export ROS_IP='${robot_ip}'\" \"roslaunch motion_tracer robot_bringup.launch DUALSHOCK:='${dual_shock}' \" "';
+    --tab -e 'bash -c "expect ssh.exp '${robot_ip}' '${password}' \"export ROS_IP='${robot_ip}'\" \"sleep 1;roslaunch motion_tracer robot_bringup.launch DUALSHOCK:='${dual_shock}' \" "';
 
 elif [ ${command} = "tracer" ]; then
   device=$7
